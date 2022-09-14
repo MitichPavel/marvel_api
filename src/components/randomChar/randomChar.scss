@@ -29,7 +29,12 @@
     }
     &__descr {
         font-size: 14px;
-        line-height: 18px;
+        line-height: 1.28;
+        -webkit-line-clamp: 4;
+        max-height: calc(1.28 * 4 * 1em);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     &__btns {
         a:nth-child(1) {
