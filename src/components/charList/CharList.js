@@ -10,7 +10,7 @@ class CharList extends Component {
     charList: [],
     loading: false,
     error: false,
-    nameSelectedChar: '',
+    idSelectedChar: '',
   }
 
   marvelService = new MarvelService();
@@ -36,30 +36,53 @@ class CharList extends Component {
       .catch(this.onError)
   }
 
-  onSelectChar(name) {
-    this.setState({ nameSelectedChar: name });
+  renderItems(arr) {
+    const { idSelectedChar } = this.state;
+    const items = arr.map(({ thumbnail, name, id, imageNotFound }) => {
+      const style = imageNotFound ? { objectFit: "unset" } : {};
+      let classNames = 'char__item';
+      if(id === idSelectedChar) {
+        classNames += ' char__item_selected';
+      }
+  
+      return (
+        <li
+          key={id}
+          className={classNames}
+          onClick={() => this.onSelectChar(id)}
+        >
+          <img style={ style } src={thumbnail} alt={id}/>
+          <div className="char__name">{name}</div>
+        </li>
+      );
+    });
+
+    return (
+      <ul className="char__grid">
+        {items}
+      </ul>
+    )
+  }
+
+  onSelectChar(id) {
+    this.setState({ idSelectedChar: id });
   }
 
   render() {
-    const { charList, error, loading, nameSelectedChar } = this.state;
+    const { charList, error, loading } = this.state;
 
-    if (loading) {
-      return <Spinner/>;
-    }
-  
-    if (error) {
-      return <ErrorMessage/>;
-    }
+    const items = this.renderItems(charList);
+
+    const errorMessage = error ? <ErrorMessage/> : null;
+    const spinner = loading ? <Spinner/> : null;
+    const content = !(loading || error) ? items : null;
+
 
     return (
       <div className="char__list">
-        <ul className="char__grid">
-          <ListItems
-            charList={ charList }
-            onSelectChar={this.onSelectChar.bind(this)}
-            nameSelectedChar={nameSelectedChar}
-          />
-        </ul>
+        {errorMessage}
+        {spinner}
+        {content}
         <button className="button button__main button__long">
           <div className="inner">load more</div>
         </button>
@@ -68,25 +91,5 @@ class CharList extends Component {
   }
 };
 
-const ListItems = ({ charList, onSelectChar, nameSelectedChar }) => {
-  return charList.map(({ thumbnail, name, imageNotFound }) => {
-    const style = imageNotFound ? { objectFit: "contain" } : {};
-    let classNames = 'char__item';
-    if(name === nameSelectedChar) {
-      classNames += ' char__item_selected';
-    }
-
-    return (
-      <li
-        key={name}
-        className={classNames}
-        onClick={() => onSelectChar(name)}
-      >
-        <img style={ style } src={thumbnail} alt={name}/>
-        <div className="char__name">{name}</div>
-      </li>
-    );
-  });
-};
 
 export default CharList;
