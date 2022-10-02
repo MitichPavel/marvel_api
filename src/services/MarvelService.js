@@ -27,8 +27,9 @@ class MarvelService {
   _transformCharacter = (char) => {
     return {
       name: char.name,
-      description: char.description,
+      description: char.description || 'There is no any description.',
       thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
+      imageNotFound: char.thumbnail.path.includes('/u/prod/marvel/i/mg/b/40/image_not_available'),
       homepage: char.urls[0].url,
       wiki: char.urls[0].url,
     }
