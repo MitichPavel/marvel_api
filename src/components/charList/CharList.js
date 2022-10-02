@@ -10,7 +10,7 @@ class CharList extends Component {
     charList: [],
     loading: false,
     error: false,
-    idSelectedChar: '',
+    selectedChar: null,
   }
 
   marvelService = new MarvelService();
@@ -36,12 +36,17 @@ class CharList extends Component {
       .catch(this.onError)
   }
 
+  onSelectChar = (id) => {
+    this.props.onCharSelected(id);
+    this.setState({ selectedChar: id });
+  }
+
   renderItems(arr) {
-    const { idSelectedChar } = this.state;
+    const { selectedChar } = this.state;
     const items = arr.map(({ thumbnail, name, id, imageNotFound }) => {
       const style = imageNotFound ? { objectFit: "unset" } : {};
       let classNames = 'char__item';
-      if(id === idSelectedChar) {
+      if(id === selectedChar) {
         classNames += ' char__item_selected';
       }
   
@@ -64,9 +69,6 @@ class CharList extends Component {
     )
   }
 
-  onSelectChar(id) {
-    this.setState({ idSelectedChar: id });
-  }
 
   render() {
     const { charList, error, loading } = this.state;
