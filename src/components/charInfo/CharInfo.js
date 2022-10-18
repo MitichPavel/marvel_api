@@ -15,11 +15,10 @@ class CharInfo extends Component {
   marvelService = new MarvelService();
 
   componentDidUpdate(prevProps) {
-    if (this.props.selectedId === prevProps.selectedId) {
-      return;
+    if (this.props.selectedId !== prevProps.selectedId) {
+      this.updateChar(this.props.selectedId);
     }
 
-    this.updateChar(this.props.selectedId);
   }
 
   onCharLoaded = (char) => {
