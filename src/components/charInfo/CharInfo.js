@@ -18,7 +18,6 @@ class CharInfo extends Component {
     if (this.props.selectedId !== prevProps.selectedId) {
       this.updateChar(this.props.selectedId);
     }
-
   }
 
   onCharLoaded = (char) => {
