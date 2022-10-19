@@ -77,7 +77,6 @@
         height: 10px;
         margin-right: 10px;
         transition: none;
-
     }
     &.button__main::before, &.button__main::after {
         background-color: $main-color;
@@ -87,5 +86,9 @@
     }
     &:hover {
         transform: translateY(-5px);
+    }
+    &:disabled {
+        pointer-events: none;
+        opacity: .75;
     }
 }

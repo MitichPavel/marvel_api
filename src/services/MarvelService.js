@@ -3,6 +3,8 @@ import extractTextContent from '../helpers/extractTextContentFormHTML';
 class MarvelService {
   _apiBase = 'https://gateway.marvel.com:443/v1/public';
   _apiKey = process.env.REACT_APP_API_KEY;
+  _offsetCharacters = 200;
+  _limitCharacters = 9;
 
   getResource = async (url) => {
     const res = await fetch(url);
@@ -14,8 +16,8 @@ class MarvelService {
     return await res.json();
   }
 
-  getAllCharacters = async () => {
-    const res = await this.getResource(`${this._apiBase}/characters?limit=9&offset=200&${this._apiKey}`);
+  getAllCharacters = async (offset = this._offsetCharacters) => {
+    const res = await this.getResource(`${this._apiBase}/characters?limit=${this._limitCharacters}&offset=${offset}&${this._apiKey}`);
     return res.data.results.map((char) => this._transformCharacter(char));
   }
 

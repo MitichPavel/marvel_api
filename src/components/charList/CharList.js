@@ -11,6 +11,9 @@ class CharList extends Component {
     loading: false,
     error: false,
     selectedChar: null,
+    loadingNewCharacters: false,
+    charCount: 0,
+    charEnded: false,
   }
 
   marvelService = new MarvelService();
@@ -18,22 +21,46 @@ class CharList extends Component {
     this.updateCharList();
   }
 
-  onCharListLoaded = (charList) => {
-    this.setState({ charList, loading: false, error: false });
+  onRequest = (offset) => {
+    if (this.state.charEnded) {
+      return;
+    }
+
+    this.onCharListLoaging();
+    this.marvelService
+      .getAllCharacters(offset || this.marvelService._offsetCharacters + this.state.charCount)
+      .then(this.onCharListLoaded)
+      .catch(this.onError)
+  }
+
+  onCharListLoaging = () => {
+    this.setState({ loadingNewCharacters: true });
+  }
+
+  onCharListLoaded = (newCharList) => {
+    this.setState(({ charList, charCount }) => ({
+      charList: [...charList, ...newCharList],
+      loading: false,
+      error: false,
+      loadingNewCharacters: false,
+      charCount: charCount + newCharList.length,
+      charEnded: newCharList?.length < this.marvelService._limitCharacters,
+    }));
   }
 
   onError = (error) => {
     console.log({ error });
-    this.setState({ loading: false, error: true });
+    this.setState({
+      loading: false,
+      loadingNewCharacters: false,
+      error: true
+    });
   }
 
   updateCharList = () => {
     this.setState({ loading: true });
 
-    this.marvelService
-      .getAllCharacters()
-      .then(this.onCharListLoaded)
-      .catch(this.onError)
+    this.onRequest();
   }
 
   onSelectChar = (id) => {
@@ -71,7 +98,7 @@ class CharList extends Component {
 
 
   render() {
-    const { charList, error, loading } = this.state;
+    const { charList, error, loading, loadingNewCharacters, charEnded } = this.state;
 
     const items = this.renderItems(charList);
 
@@ -79,13 +106,19 @@ class CharList extends Component {
     const spinner = loading ? <Spinner/> : null;
     const content = !(loading || error) ? items : null;
 
+    const btnStyle = charEnded ? { display: 'none' } : null;
 
     return (
       <div className="char__list">
         {errorMessage}
         {spinner}
         {content}
-        <button className="button button__main button__long">
+        <button
+          className="button button__main button__long"
+          disabled={loadingNewCharacters}
+          style={btnStyle}
+          onClick={() => this.onRequest()}
+          >
           <div className="inner">load more</div>
         </button>
       </div>
