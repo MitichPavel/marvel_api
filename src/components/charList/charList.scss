@@ -28,8 +28,9 @@
             object-fit: cover;
             transform: translate(-15px, -15px);
         }
-        &_selected {
-            box-shadow: 0 5px 20px $main-color;
+        &:focus {
+            outline: 5px solid;
+            border-radius: 1px;
             transform: translateY(-8px);
         }
     }

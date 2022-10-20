@@ -69,18 +69,14 @@ class CharList extends Component {
   }
 
   renderItems(arr) {
-    const { selectedChar } = this.state;
     const items = arr.map(({ thumbnail, name, id, imageNotFound }) => {
       const style = imageNotFound ? { objectFit: "unset" } : {};
-      let classNames = 'char__item';
-      if(id === selectedChar) {
-        classNames += ' char__item_selected';
-      }
   
       return (
         <li
+          tabIndex="0"
           key={id}
-          className={classNames}
+          className="char__item"
           onClick={() => this.onSelectChar(id)}
         >
           <img style={ style } src={thumbnail} alt={id}/>
