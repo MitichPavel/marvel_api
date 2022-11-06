@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+[Marvel API :point_right: project preview](https://mitichpavel.github.io/marvel_api)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
