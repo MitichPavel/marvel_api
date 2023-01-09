@@ -1,32 +1,25 @@
 import extractTextContent from '../helpers/extractTextContentFormHTML';
+import { useHttp } from '../hooks/http.hook';
 
-class MarvelService {
-  _apiBase = 'https://gateway.marvel.com:443/v1/public';
-  _apiKey = process.env.REACT_APP_API_KEY;
-  _offsetCharacters = 200;
-  _limitCharacters = 9;
+const useMarvelService = () => {
+  const _apiBase = 'https://gateway.marvel.com:443/v1/public';
+  const _apiKey = process.env.REACT_APP_API_KEY;
+  const _offsetCharacters = 200;
+  const _limitCharacters = 9;
 
-  getResource = async (url) => {
-    const res = await fetch(url);
+  const { loading, error, clearError, request } = useHttp();
 
-    if (!res.ok) {
-      throw new Error(`Could'nt fetch ${url}, status: ${res.status}`);
-    }
-
-    return await res.json();
+  const getAllCharacters = async (offset = _offsetCharacters) => {
+    const res = await request(`${_apiBase}/characters?limit=${_limitCharacters}&offset=${offset}&apikey=${_apiKey}`);
+    return res.data.results.map((char) => _transformCharacter(char));
   }
 
-  getAllCharacters = async (offset = this._offsetCharacters) => {
-    const res = await this.getResource(`${this._apiBase}/characters?limit=${this._limitCharacters}&offset=${offset}&apikey=${this._apiKey}`);
-    return res.data.results.map((char) => this._transformCharacter(char));
+  const getCharacter = async (id) => {
+    const res = await request(`${_apiBase}/characters/${id}?apikey=${_apiKey}`);
+    return _transformCharacter(res.data.results[0]);
   }
 
-  getCharacter = async (id) => {
-    const res = await this.getResource(`${this._apiBase}/characters/${id}?apikey=${this._apiKey}`);
-    return this._transformCharacter(res.data.results[0]);
-  }
-
-  _transformCharacter = (char) => {
+  const _transformCharacter = (char) => {
     return {
       id: char.id,
       name: char.name,
@@ -38,6 +31,16 @@ class MarvelService {
       comics: char.comics.items,
     }
   }
+
+  return {
+    loading,
+    error,
+    clearError,
+    getCharacter,
+    getAllCharacters,
+    _offsetCharacters,
+    _limitCharacters
+  };
 }
 
-export default MarvelService;
+export default useMarvelService;
