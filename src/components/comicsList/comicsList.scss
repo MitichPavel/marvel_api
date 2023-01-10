@@ -32,5 +32,10 @@
         &:hover {
             transform: translateY(-5px);
         }
+        &:focus {
+            outline: 5px solid;
+            border-radius: 1px;
+            transform: translateY(-8px);
+        }
     }
 }

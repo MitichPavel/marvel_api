@@ -6,6 +6,9 @@ const useMarvelService = () => {
   const _apiKey = process.env.REACT_APP_API_KEY;
   const _offsetCharacters = 200;
   const _limitCharacters = 9;
+  const _offsetComics = 0;
+  const _limitComics = 8;
+
 
   const { loading, error, clearError, request } = useHttp();
 
@@ -17,6 +20,11 @@ const useMarvelService = () => {
   const getCharacter = async (id) => {
     const res = await request(`${_apiBase}/characters/${id}?apikey=${_apiKey}`);
     return _transformCharacter(res.data.results[0]);
+  }
+
+  const getAllComics = async (offset = _offsetComics) => {
+    const res = await request(`${_apiBase}/comics?orderBy=issueNumber&limit=${_limitComics}&offset=${offset}&apikey=${_apiKey}`)
+    return res.data.results.map((comics) => _transformComics(comics));
   }
 
   const _transformCharacter = (char) => {
@@ -32,14 +40,28 @@ const useMarvelService = () => {
     }
   }
 
+  const _transformComics = (comics) => {
+    return {
+      id: comics.id,
+      title: comics.title,
+      thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
+      imageNotFound: comics.thumbnail.path.includes('/u/prod/marvel/i/mg/b/40/image_not_available'),
+      price: comics.prices?.[0]?.price ? `${comics.prices[0].price}$` : 'NOT AVAILABLE',
+      resourceURI: comics.resourceURI,
+    }
+  }
+
   return {
     loading,
     error,
     clearError,
     getCharacter,
     getAllCharacters,
+    getAllComics,
     _offsetCharacters,
-    _limitCharacters
+    _limitCharacters,
+    _offsetComics,
+    _limitComics,
   };
 }
 

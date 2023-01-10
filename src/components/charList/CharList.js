@@ -4,28 +4,21 @@ import PropTypes from 'prop-types';
 import './charList.scss';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-
 import useMarvelService from '../../services/MarvelService';
-
 
 const CharList = (props) => {
   const [charList, setCharlist] = useState([]);
   const { loading, error, getAllCharacters, clearError, _offsetCharacters, _limitCharacters } = useMarvelService();
-  const [loadingNewCharacters, setLoadingNewCharacters] = useState(false);
   const [charCount, setCharCount] = useState(0);
   const [charEnded, setCharEnded] = useState(false);
 
   useEffect(() => {
-    onRequest(_offsetCharacters, true)
+    onRequest(_offsetCharacters)
   }, []);
 
-  const onRequest = (offset, isInitialrequest = false) => {
+  const onRequest = (offset) => {
     if (charEnded) {
       return;
-    }
-
-    if (!isInitialrequest) {
-      setLoadingNewCharacters(true);
     }
 
     clearError();
@@ -35,7 +28,6 @@ const CharList = (props) => {
 
   const onCharListLoaded = (newCharList) => {
     setCharlist((charList) => [...charList, ...newCharList]);
-    setLoadingNewCharacters(false);
     setCharCount(charCount => charCount + newCharList.length);
     setCharEnded(newCharList?.length < _limitCharacters);
   }
@@ -46,10 +38,9 @@ const CharList = (props) => {
     itemRefs.current[id].focus();
   }
 
-
   const renderItems = (arr) => {
     const items = arr.map(({ thumbnail, name, id, imageNotFound }, i) => {
-      const style = imageNotFound ? { objectFit: "unset" } : {};
+      const style = imageNotFound ? { objectFit: "unset" } : null
   
       return (
         <li
@@ -84,7 +75,7 @@ const CharList = (props) => {
   const items = renderItems(charList);
 
   const errorMessage = error ? <ErrorMessage/> : null;
-  const spinner = loading && !loadingNewCharacters ? <Spinner/> : null;
+  const spinner = loading && !charList.length ? <Spinner/> : null;
 
   const btnStyle = charEnded ? { display: 'none' } : null;
 
@@ -95,7 +86,7 @@ const CharList = (props) => {
       {items}
       <button
         className="button button__main button__long"
-        disabled={loading || loadingNewCharacters}
+        disabled={loading}
         style={btnStyle}
         onClick={() => onRequest()}
         >
