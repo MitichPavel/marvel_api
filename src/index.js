@@ -10,5 +10,3 @@ ReactDOM
   <React.StrictMode>
     <App />
   </React.StrictMode>)
-
-
