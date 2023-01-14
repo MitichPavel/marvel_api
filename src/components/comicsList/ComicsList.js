@@ -19,7 +19,7 @@ const ComicsList = () => {
         if (comicsEnded) {
             return;
         }
-        
+
         clearError();
         getAllComics(offset || _offsetComics + comicsCount)
             .then(onComicsListLoaded)

@@ -9,7 +9,6 @@ import useMarvelService from '../../services/MarvelService';
 const CharList = (props) => {
   const [charList, setCharlist] = useState([]);
   const { loading, error, getAllCharacters, clearError, _offsetCharacters, _limitCharacters } = useMarvelService();
-  const [charCount, setCharCount] = useState(0);
   const [charEnded, setCharEnded] = useState(false);
 
   useEffect(() => {
@@ -22,14 +21,18 @@ const CharList = (props) => {
     }
 
     clearError();
-    getAllCharacters(offset || _offsetCharacters + charCount)
+    getAllCharacters(offset || _offsetCharacters + charList.length)
       .then(onCharListLoaded)
   }
 
   const onCharListLoaded = (newCharList) => {
-    setCharlist((charList) => [...charList, ...newCharList]);
-    setCharCount(charCount => charCount + newCharList.length);
-    setCharEnded(newCharList?.length < _limitCharacters);
+    if (newCharList.length) {
+      setCharlist((charList) => [...charList, ...newCharList]);
+    }
+
+    if (newCharList?.length < _limitCharacters) {
+      setCharEnded(true);
+    }
   }
 
   const itemRefs = useRef([]);
@@ -46,7 +49,7 @@ const CharList = (props) => {
         <li
           tabIndex="0"
           ref={el => itemRefs.current[i] = el}
-          key={id}
+          key={`${id}_${i}`}
           className="char__item"
           onClick={() => {
             props.onCharSelected(id);
