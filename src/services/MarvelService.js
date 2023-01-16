@@ -14,17 +14,22 @@ const useMarvelService = () => {
   const getAllCharacters = async (offset = _offsetCharacters) => {
     const res = await request(`${_apiBase}/characters?limit=${_limitCharacters}&offset=${offset}&apikey=${_apiKey}`);
     return res.data.results.map((char) => _transformCharacter(char));
-  }
+  };
 
   const getCharacter = async (id) => {
     const res = await request(`${_apiBase}/characters/${id}?apikey=${_apiKey}`);
     return _transformCharacter(res.data.results[0]);
-  }
+  };
 
   const getAllComics = async (offset = _offsetComics) => {
     const res = await request(`${_apiBase}/comics?orderBy=issueNumber&limit=${_limitComics}&offset=${offset}&apikey=${_apiKey}`)
     return res.data.results.map((comics) => _transformComics(comics));
-  }
+  };
+
+  const getComic = async (id) => {
+    const res = await request(`${_apiBase}/comics/${id}?apikey=${_apiKey}`);
+    return _transformSingleComic(res.data.results[0]);
+  };
 
   const _transformCharacter = (char) => {
     return {
@@ -37,7 +42,7 @@ const useMarvelService = () => {
       wiki: char.urls[0].url,
       comics: char.comics.items,
     }
-  }
+  };
 
   const _transformComics = (comics) => {
     return {
@@ -46,9 +51,21 @@ const useMarvelService = () => {
       thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
       imageNotFound: comics.thumbnail.path.includes('/u/prod/marvel/i/mg/b/40/image_not_available'),
       price: comics.prices?.[0]?.price ? `${comics.prices[0].price}$` : 'NOT AVAILABLE',
-      resourceURI: comics.resourceURI,
     }
-  }
+  };
+
+  const _transformSingleComic = (comic) => {
+    return {
+      id: comic.id,
+      title: comic.title,
+      description: comic.description || 'There is no any description.',
+      language: comic.textObjects?.[0]?.language ?? 'no information',
+      pageCount: comic.pageCount,
+      thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
+      imageNotFound: comic.thumbnail.path.includes('/u/prod/marvel/i/mg/b/40/image_not_available'),
+      price: comic.prices?.[0]?.price ? `${comic.prices[0].price}$` : 'NOT AVAILABLE',
+    }
+  };
 
   return {
     loading,
@@ -56,6 +73,7 @@ const useMarvelService = () => {
     clearError,
     getCharacter,
     getAllCharacters,
+    getComic,
     getAllComics,
     _offsetCharacters,
     _limitCharacters,
