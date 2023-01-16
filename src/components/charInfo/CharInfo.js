@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import './charInfo.scss';
@@ -55,7 +56,7 @@ const View = ({ char }) => {
     const comicsList = arr.slice(0,10).map((item, i) => {
       return (
         <li key={i} className="char__comics-item">
-          {item.name}
+          <Link to={`comics/${item.id}`}>{item.name}</Link>
         </li>
       );
     });

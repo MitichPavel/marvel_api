@@ -40,8 +40,11 @@ const useMarvelService = () => {
       imageNotFound: char.thumbnail.path.includes('/u/prod/marvel/i/mg/b/40/image_not_available'),
       homepage: char.urls[0].url,
       wiki: char.urls[0].url,
-      comics: char.comics.items,
-    }
+      comics: char.comics.items.map((comic) => {
+        comic.id = comic.resourceURI.substring(comic.resourceURI.lastIndexOf('/') + 1);
+        return comic;
+      }),
+    };
   };
 
   const _transformComics = (comics) => {
