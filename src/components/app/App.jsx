@@ -9,7 +9,7 @@ const Page404 = lazy(() => import("../pages/Page404"));
 
 const App = () => {
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router basename={import.meta.env.PUBLIC_URL}>
       <div className="app">
         <AppHeader />
         <main>
