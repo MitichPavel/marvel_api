@@ -1,17 +1,17 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { lazy } from 'react';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { lazy } from "react";
 import AppHeader from "../appHeader/AppHeader";
 
-const MainPage = lazy(() => import('../pages/MainPage'));
-const ComicsPage = lazy(() => import('../pages/ComicsPage'));
-const SingleComicPage = lazy(() => import('../pages/SingleComicPage'));
-const Page404 = lazy(() => import('../pages/Page404'));
+const MainPage = lazy(() => import("../pages/MainPage"));
+const ComicsPage = lazy(() => import("../pages/ComicsPage"));
+const SingleComicPage = lazy(() => import("../pages/SingleComicPage"));
+const Page404 = lazy(() => import("../pages/Page404"));
 
 const App = () => {
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <div className="app">
-        <AppHeader/>
+        <AppHeader />
         <main>
           <Routes>
             <Route path="/" element={<MainPage />} />
@@ -22,7 +22,7 @@ const App = () => {
         </main>
       </div>
     </Router>
-  )
-}
+  );
+};
 
 export default App;
