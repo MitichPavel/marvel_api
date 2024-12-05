@@ -1,4 +1,4 @@
-@import '../../style/variables.scss';
+@use '../../style/variables.scss';
 
 .randomchar {
     display: grid;
@@ -46,7 +46,7 @@
     }
     &__static {
         padding: 40px 35px;
-        background-color: $dark;
+        background-color: variables.$dark;
         position: relative;
         button {
             margin-top: 13px;

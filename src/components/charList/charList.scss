@@ -1,4 +1,4 @@
-@import '../../style/variables.scss';
+@use '../../style/variables.scss';
 
 .char {
     &__content {
@@ -17,11 +17,29 @@
     &__item {
         width: 200px;
         min-height: 318px;
-        background-color: $dark;
+        background-color: variables.$dark;
         box-shadow: 5px 5px 10px rgba(0, 0, 0, .25);
         padding: 15px;
         cursor: pointer;
         transition: 0.3s transform;
+        &-enter {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        &-enter-active {
+            transform: translateY(0);
+            opacity: 1;
+            transition: opacity var(--animation-duration, 500) ease-in, transform var(--animation-duration, 500) ease-in;
+        }
+        &-exit {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        &-exit-active {
+            transform: translateY(0);
+            opacity: 0;
+            transition: opacity var(--animation-duration, 500) ease-in, transform var(--animation-duration, 500) ease-in;
+        }
         img {
             width: 200px;
             height: 200px;
