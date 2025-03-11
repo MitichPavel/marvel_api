@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import "./charInfo.scss";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
-import useMarvelService from "../../services/MarvelService";
+import useMarvelService from "@services/MarvelService";
 import Skeleton from "../skeleton/Skeleton";
 
 const CharInfo = (props) => {
@@ -47,6 +47,18 @@ const CharInfo = (props) => {
   );
 };
 
+export const renderComicsList = (arr) => {
+  const comicsList = arr.slice(0, 10).map((item, i) => {
+    return (
+      <li key={i} className="char__comics-item">
+        <Link to={`/comics/${item.id}`}>{item.name}</Link>
+      </li>
+    );
+  });
+
+  return arr.length ? comicsList : <li>This character has no comics.</li>;
+};
+
 const View = ({ char }) => {
   const {
     name,
@@ -59,17 +71,6 @@ const View = ({ char }) => {
   } = char;
   const imageStyle = imageNotFound ? { objectFit: "contain" } : {};
 
-  const renderComicsList = (arr) => {
-    const comicsList = arr.slice(0, 10).map((item, i) => {
-      return (
-        <li key={i} className="char__comics-item">
-          <Link to={`comics/${item.id}`}>{item.name}</Link>
-        </li>
-      );
-    });
-
-    return arr.length ? comicsList : <li>This character has no comics.</li>;
-  };
   return (
     <>
       <div className="char__basics">

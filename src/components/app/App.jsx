@@ -5,8 +5,14 @@ import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
 const MainPage = lazy(() => import("../pages/MainPage"));
 const ComicsPage = lazy(() => import("../pages/ComicsPage"));
-const SingleComicPage = lazy(() => import("../pages/SingleComicPage"));
 const Page404 = lazy(() => import("../pages/Page404"));
+const SingleComicLayout = lazy(() =>
+  import("../pages/singleComicLayout/SingleComicLayout")
+);
+const SingleCharLayout = lazy(() =>
+  import("../pages/singleCharLayout/SingleCharLayout")
+);
+const SinglePage = lazy(() => import("../pages/SinglePage"));
 
 const App = () => {
   return (
@@ -17,9 +23,32 @@ const App = () => {
           <main>
             <Suspense fallback={<div>Loading...</div>}>
               <Routes>
-                <Route path="/" element={<MainPage />} />
-                <Route path="/comics" element={<ComicsPage />} />
-                <Route path="/comics/:comicId" element={<SingleComicPage />} />
+                <Route exact path="/" element={<MainPage />} />
+
+                <Route exact path="/comics" element={<ComicsPage />} />
+
+                <Route
+                  exact
+                  path="/comics/:id"
+                  element={
+                    <SinglePage
+                      Component={SingleComicLayout}
+                      dataType="comic"
+                    />
+                  }
+                />
+
+                <Route
+                  exact
+                  path="/character/:id"
+                  element={
+                    <SinglePage
+                      Component={SingleCharLayout}
+                      dataType="character"
+                    />
+                  }
+                />
+
                 <Route path="*" element={<Page404 />} />
               </Routes>
             </Suspense>

@@ -7,6 +7,16 @@
         grid-template-columns: 650px 425px;
         column-gap: 25px;
         align-items: start;
+
+        .char__sidebar {
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            row-gap: 25px;
+            position: sticky;
+            top: 30px;
+            z-index: 5;
+        }
     }
     &__grid {
         display: grid;
