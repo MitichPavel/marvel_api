@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
-
-import "./comicsList.scss";
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelService from "../../services/MarvelService";
 import { Link } from "react-router-dom";
+import { setContentMore } from "@utils/setContent";
+
+import "./comicsList.scss";
 
 const ComicsList = () => {
   const [comicsList, setComicsList] = useState([]);
   const {
-    loading,
-    error,
     clearError,
     getAllComics,
     _offsetComics,
     _limitComics,
+    process,
+    setProcess,
   } = useMarvelService();
   const [comicsEnded, setComicsEnded] = useState(false);
 
@@ -28,9 +27,9 @@ const ComicsList = () => {
     }
 
     clearError();
-    getAllComics(offset || _offsetComics + comicsList.length).then(
-      onComicsListLoaded
-    );
+    getAllComics(offset || _offsetComics + comicsList.length)
+      .then(onComicsListLoaded)
+      .then(() => setProcess("success"));
   };
 
   const onComicsListLoaded = (newComicsList) => {
@@ -44,6 +43,10 @@ const ComicsList = () => {
   };
 
   const renderItems = (comicsList) => {
+    if (comicsList.length === 0) {
+      return null;
+    }
+
     const items = comicsList.map((item, i) => {
       const style = item.imageNotFound ? { objectFit: "contain" } : null;
 
@@ -63,21 +66,19 @@ const ComicsList = () => {
       );
     });
 
-    return items;
+    return <ul className="comics__grid">{items}</ul>;
   };
-
-  const items = renderItems(comicsList);
-  const spinner = loading && !comicsList.length ? <Spinner /> : null;
-  const errorMessage = error ? <ErrorMessage /> : null;
 
   return (
     <div className="comics__list">
-      {spinner}
-      {errorMessage}
-      <ul className="comics__grid">{items}</ul>
+      {setContentMore(
+        process,
+        () => renderItems(comicsList),
+        comicsList.length === 0
+      )}
       <button
         onClick={() => onRequest()}
-        disabled={loading}
+        disabled={process === "loading"}
         className="button button__main button__long"
       >
         <div className="inner">load more</div>

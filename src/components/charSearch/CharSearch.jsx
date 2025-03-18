@@ -1,46 +1,23 @@
 import { useState } from "react";
 import { Form, Formik, Field, ErrorMessage } from "formik";
-import Spinner from "@components/spinner/Spinner";
 import useMarvelService from "@services/MarvelService";
+import { setContentNoSkeleton } from "@utils/setContent";
+import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import "./charSearch.scss";
-import { Link } from "react-router-dom";
 
-const CharSearch = (props) => {
-  const {
-    loading,
-    error,
-    getAllCharacters,
-    clearError,
-    _offsetCharacters,
-    _limitCharacters,
-    getCharacterByName,
-  } = useMarvelService();
+const CharSearch = () => {
+  const { clearError, getCharacterByName, process, setProcess } =
+    useMarvelService();
   const [result, setResult] = useState(null);
-
-  function renderResult(result) {
-    if (loading) {
-      return <Spinner />;
-    }
-
-    if (error) {
-      return <ErrorMessage />;
-    }
-
-    if (result) {
-      return <SearchResult result={result} />;
-    }
-
-    return null;
-  }
 
   const updateChar = (name) => {
     clearError();
 
-    getCharacterByName(name).then(setResult);
+    return getCharacterByName(name)
+      .then(setResult)
+      .then(() => setProcess("success"));
   };
-
-  const resultToRender = renderResult(result);
 
   return (
     <div className="char__search">
@@ -75,12 +52,12 @@ const CharSearch = (props) => {
               <button
                 type="submit"
                 className="button button__main"
-                disabled={loading || isSubmitting}
+                disabled={process === "loading" || isSubmitting}
               >
                 <div className="inner">Search</div>
               </button>
             </Form>
-            {resultToRender}
+            {setContentNoSkeleton(process, SearchResult, { result })}
           </>
         )}
       </Formik>
@@ -90,8 +67,7 @@ const CharSearch = (props) => {
 
 const SearchResult = ({ result }) => {
   const items = result.map((char) => {
-    const { id, name, description, thumbnail, homepage, wiki, imageNotFound } =
-      char;
+    const { id, name, description, thumbnail, imageNotFound } = char;
     const imageStyle = imageNotFound ? { objectFit: "contain" } : {};
 
     return (

@@ -13,6 +13,7 @@ export default defineConfig({
       "@pages": "/src/pages",
       "@helpers": "/src/helpers",
       "@style": "/src/style",
+      "@utils": "/src/utils",
     },
   },
 });

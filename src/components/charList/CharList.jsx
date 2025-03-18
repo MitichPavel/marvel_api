@@ -1,21 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-
-import "./charList.scss";
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelService from "../../services/MarvelService";
+import { setContentMore } from "@utils/setContent";
+import "./charList.scss";
 
 const CharList = (props) => {
   const [charList, setCharlist] = useState([]);
   const {
-    loading,
-    error,
     getAllCharacters,
     clearError,
     _offsetCharacters,
     _limitCharacters,
+    process,
+    setProcess,
   } = useMarvelService();
   const [charEnded, setCharEnded] = useState(false);
   const duration = 500;
@@ -30,9 +28,9 @@ const CharList = (props) => {
     }
 
     clearError();
-    getAllCharacters(offset || _offsetCharacters + charList.length).then(
-      onCharListLoaded
-    );
+    getAllCharacters(offset || _offsetCharacters + charList.length)
+      .then(onCharListLoaded)
+      .then(() => setProcess("success"));
   };
 
   const onCharListLoaded = (newCharList) => {
@@ -52,6 +50,10 @@ const CharList = (props) => {
   };
 
   const renderItems = (arr) => {
+    if (arr.length === 0) {
+      return null;
+    }
+
     const items = arr.map(({ thumbnail, name, id, imageNotFound }, i) => {
       const style = imageNotFound ? { objectFit: "unset" } : null;
 
@@ -90,21 +92,18 @@ const CharList = (props) => {
     );
   };
 
-  const items = renderItems(charList);
-
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading && !charList.length ? <Spinner /> : null;
-
   const btnStyle = charEnded ? { display: "none" } : null;
 
   return (
     <div className="char__list">
-      {errorMessage}
-      {spinner}
-      {items}
+      {setContentMore(
+        process,
+        () => renderItems(charList),
+        charList.length === 0
+      )}
       <button
         className="button button__main button__long"
-        disabled={loading}
+        disabled={process === "loading"}
         style={btnStyle}
         onClick={() => onRequest()}
       >

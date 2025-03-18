@@ -9,7 +9,7 @@ const useMarvelService = () => {
   const _offsetComics = 0;
   const _limitComics = 8;
 
-  const { loading, error, clearError, request } = useHttp();
+  const { clearError, request, process, setProcess } = useHttp();
 
   const getAllCharacters = async (offset = _offsetCharacters) => {
     const res = await request(
@@ -100,9 +100,9 @@ const useMarvelService = () => {
   };
 
   return {
-    loading,
-    error,
     clearError,
+    process,
+    setProcess,
     getCharacter,
     getAllCharacters,
     getComic,

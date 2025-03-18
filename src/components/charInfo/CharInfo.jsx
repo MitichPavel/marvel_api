@@ -1,16 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { setContent } from "@utils/setContent";
 
 import "./charInfo.scss";
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelService from "@services/MarvelService";
-import Skeleton from "../skeleton/Skeleton";
 
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
-  const { loading, error, getCharacter, clearError } = useMarvelService();
+  const { getCharacter, clearError, process, setProcess } = useMarvelService();
 
   const prevCharId = useRef(props.selectedId);
 
@@ -29,21 +27,13 @@ const CharInfo = (props) => {
     }
 
     clearError();
-    getCharacter(props.selectedId).then(onCharLoaded);
+    getCharacter(props.selectedId)
+      .then(onCharLoaded)
+      .then(() => setProcess("success"));
   };
 
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error || !char) ? <View char={char} /> : null;
-  const skeleton = loading || error || char ? null : <Skeleton />;
-
   return (
-    <div className="char__info">
-      {spinner}
-      {errorMessage}
-      {content}
-      {skeleton}
-    </div>
+    <div className="char__info">{setContent(process, View, { char })}</div>
   );
 };
 
